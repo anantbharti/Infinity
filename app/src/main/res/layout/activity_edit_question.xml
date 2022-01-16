@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:orientation="vertical"
+    tools:context=".activities.EditQuestion">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Question number"
+                android:inputType="number"
+                android:layout_margin="3dp"
+                android:maxLength="2"
+                android:id="@+id/edit_ques_no"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Question statement"
+                android:layout_margin="3dp"
+                android:inputType="text"
+                android:id="@+id/edit_ques_statement"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:layout_margin="3dp"
+                android:id="@+id/edit_ques_img"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_add_photo_alternate_24"
+                android:id="@+id/edit_img_btn"
+                android:padding="4dp"
+                android:layout_gravity="center_horizontal"/>
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Option A"
+                android:layout_margin="3dp"
+                android:inputType="text"
+                android:id="@+id/edit_option_a"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Option B"
+                android:layout_margin="3dp"
+                android:inputType="text"
+                android:id="@+id/edit_option_b"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Option C"
+                android:layout_margin="3dp"
+                android:inputType="text"
+                android:id="@+id/edit_option_c"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Option D"
+                android:layout_margin="3dp"
+                android:inputType="text"
+                android:id="@+id/edit_option_d"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="Select correct option :"/>
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:orientation="horizontal"
+                android:id="@+id/correct_option_radio_group">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/rad_btn_a"
+                    android:layout_height="wrap_content"
+                    android:text="a"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/rad_btn_b"
+                    android:layout_height="wrap_content"
+                    android:text="b"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rad_btn_c"
+                    android:layout_weight="1"
+                    android:text="c"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rad_btn_d"
+                    android:layout_weight="1"
+                    android:text="d"/>
+            </RadioGroup>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Save"
+                android:layout_margin="20dp"
+                android:id="@+id/save_ques_btn"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

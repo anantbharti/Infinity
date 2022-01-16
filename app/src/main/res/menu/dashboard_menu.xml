@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/my_profile"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="My profile">
+    </item>
+    <item
+        android:id="@+id/log_out"
+        android:orderInCategory="200"
+        app:showAsAction="never"
+        android:title="Log out">
+    </item>
+    <item
+        android:id="@+id/help"
+        android:orderInCategory="300"
+        app:showAsAction="never"
+        android:title="Help">
+    </item>
+    <item
+        android:id="@+id/share_app"
+        android:orderInCategory="400"
+        app:showAsAction="never"
+        android:title="Share app">
+    </item>
+</menu>

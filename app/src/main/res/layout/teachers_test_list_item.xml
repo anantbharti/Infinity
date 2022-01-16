@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="3dp"
+    android:layout_margin="3dp"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test name"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:layout_margin="3dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:id="@+id/tt_li_name"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subject"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/tt_li_name"
+            android:textSize="17sp"
+            android:textColor="#000000"
+            android:layout_marginHorizontal="6dp"
+            android:layout_toLeftOf="@+id/tt_li_date"
+            android:id="@+id/tt_li_subject"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:text="added on"
+            android:textSize="17sp"
+            android:id="@+id/tt_li_date"
+            android:textColor="#000000"
+            android:layout_below="@id/tt_li_name"
+            android:layout_alignParentRight="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="3dp"
+            android:layout_below="@id/tt_li_subject"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_rad"
+                android:text="Open"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:id="@+id/tt_li_open_btn"
+                android:layout_margin="5dp"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_rad"
+                android:text="Invite"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:id="@+id/tt_li_invite_btn"
+                android:layout_margin="5dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

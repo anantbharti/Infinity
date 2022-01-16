@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorBackground"
+    tools:context=".activities.TeacherTest">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        app:cardElevation="6dp"
+        android:id="@+id/ttd_cv">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/colorPrimaryDark"
+            android:id="@+id/ll_test_details">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Test Name"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@id/tt_edit_btn"
+                android:textSize="20sp"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:id="@+id/ttd_test_name"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subject"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="3dp"
+                android:textSize="18sp"
+                android:layout_below="@+id/ttd_test_name"
+                android:textColor="#ffffff"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/ttd_test_subject"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Added on:"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="12dp"
+                android:textSize="18sp"
+                android:layout_below="@id/ttd_test_subject"
+                android:textColor="#ffffff"
+                android:id="@+id/ttd_test_date"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="12dp"
+                android:textSize="18sp"
+                android:layout_below="@id/ttd_test_date"
+                android:textColor="#ffffff"
+                android:id="@+id/ttd_test_duration"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test Code "
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:textSize="18sp"
+                android:layout_marginLeft="12dp"
+                android:layout_below="@id/ttd_test_duration"
+                android:textColor="#ffffff"
+                android:id="@+id/ttd_test_code"/>
+            <Button
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/ttd_test_code"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_baseline_file_copy_24"
+                android:id="@+id/ttd_code_copy"
+                android:layout_below="@id/ttd_test_duration"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="#ffffff"
+                android:layout_below="@id/ttd_test_duration"
+                android:text="See who attempted"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp"
+                android:layout_toLeftOf="@id/see_students_attempted"/>
+
+            <Button
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="12dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/see_students_attempted"
+                android:layout_below="@id/ttd_test_duration"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_baseline_remove_red_eye_24" />
+
+            <Button
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="12dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_baseline_edit_24"
+                android:id="@+id/tt_edit_btn"
+                android:layout_alignParentRight="true"/>
+
+            <Button
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="12dp"
+                android:layout_below="@id/tt_edit_btn"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_baseline_delete_24"
+                android:id="@+id/tt_delete_btn"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_margin="6dp"
+        app:cardCornerRadius="15dp"
+        android:layout_below="@id/ttd_cv"
+        app:cardElevation="5dp"
+        android:id="@+id/tt_edit_cv"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Test title"
+                    android:layout_margin="3dp"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/edit_test_name"
+                    android:inputType="text"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Subject"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="3dp"
+                    android:id="@+id/edit_test_subject"
+                    android:inputType="text"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:hint="Test Duration in minutes"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="60dp"
+                    android:maxLength="3"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/edit_test_duration"
+                    android:inputType="number"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:text="Cancel"
+                    android:layout_marginHorizontal="7dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_rad"
+                    android:textColor="#ffffff"
+                    android:textAllCaps="false"
+                    android:id="@+id/edit_test_cancel"
+                    android:layout_gravity="center_horizontal"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:text="Save"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="7dp"
+                    android:background="@drawable/button_rad"
+                    android:textColor="#ffffff"
+                    android:textAllCaps="false"
+                    android:id="@+id/edit_test_save"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/teacher_questions_list"
+        android:layout_above="@id/add_question"
+        android:layout_below="@id/ttd_cv"/>
+
+    <Button
+        android:id="@+id/add_question"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:text="Add question"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_rad" />
+
+
+</RelativeLayout>
