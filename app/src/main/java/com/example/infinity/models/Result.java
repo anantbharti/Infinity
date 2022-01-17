@@ -9,13 +9,15 @@ public class Result implements Serializable {
     private int studentRoll;
     private String date;
     private String testName;
-    private int score;
+    private String score;
     private int minimizeCount;
 
     public Result() {
     }
 
-    public Result(String testCode, String studentId, String studentName, int studentRoll, String date, String testName, int score, int minimizeCount) {
+
+
+    public Result(String testCode, String studentId, String studentName, int studentRoll, String date, String testName, String score, int minimizeCount) {
         this.testCode = testCode;
         this.studentId = studentId;
         this.studentName = studentName;
@@ -74,11 +76,11 @@ public class Result implements Serializable {
         this.testName = testName;
     }
 
-    public int getScore() {
+    public String getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(String score) {
         this.score = score;
     }
 

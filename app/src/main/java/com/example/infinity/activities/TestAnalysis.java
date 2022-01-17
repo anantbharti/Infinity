@@ -1,44 +1,53 @@
 package com.example.infinity.activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.infinity.R;
-import com.example.infinity.adapter.AnalysisAdapter;
-import com.example.infinity.adapter.StudentQuestionsAdapter;
+import com.example.infinity.adapter.TestAnalysisAdapter;
 import com.example.infinity.models.Question;
 import com.example.infinity.models.Result;
 import com.example.infinity.models.Statics;
-import com.example.infinity.models.Test;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class TestAnalysis extends AppCompatActivity {
 
     RecyclerView recyclerView;
     FirebaseFirestore database;
-    AnalysisAdapter analysisAdapter;
+    TestAnalysisAdapter analysisAdapter;
     Result result;
     String qCnt;
     TextView testName,score,stuName,stuRoll,minCnt,date;
+    List<Question> questions;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_analysis);
         getSupportActionBar().hide();
         result = (Result) getIntent().getSerializableExtra("result");
-        qCnt = getIntent().getExtras().getString("quesCnt");
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(true);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
         setUpViews();
         database = FirebaseFirestore.getInstance();
 
@@ -46,14 +55,17 @@ public class TestAnalysis extends AppCompatActivity {
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                progressDialog.dismiss();
                 setRecyclerView(documentSnapshot);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
                 Toast.makeText(TestAnalysis.this,e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
 
     }
 
@@ -68,10 +80,7 @@ public class TestAnalysis extends AppCompatActivity {
 
         date.setText("On "+result.getDate());
         testName.setText(result.getTestName());
-        if(qCnt.equals(""))
         score.setText("Score: "+result.getScore());
-        else
-            score.setText("Score: "+result.getScore()+"/"+qCnt);
         stuName.setText(result.getStudentName());
         stuRoll.setText("Roll no: "+result.getStudentRoll());
         minCnt.setText("Screen minimized: "+result.getMinimizeCount()+" times");
@@ -79,14 +88,23 @@ public class TestAnalysis extends AppCompatActivity {
 
     private void setRecyclerView(DocumentSnapshot documentSnapshot) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        Query query = database.collection(Statics.QUESTIONS_COLLECTION)
-                .whereEqualTo(Statics.TEST_CODE,result.getTestCode())
-                .orderBy("quesNo");
-        FirestoreRecyclerOptions<Question> options = new FirestoreRecyclerOptions.Builder<Question>()
-                .setQuery(query,Question.class)
-                .build();
-        analysisAdapter = new AnalysisAdapter(options,documentSnapshot);
-        recyclerView.setAdapter(analysisAdapter);
-        analysisAdapter.startListening();
+        database.collection(Statics.QUESTIONS_COLLECTION)
+                .whereEqualTo(Statics.TEST_CODE,result.getTestCode()).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        questions = queryDocumentSnapshots.toObjects(Question.class);
+                        Collections.sort(questions, Comparator.comparing(obj->obj.getQuesNo()));
+                        analysisAdapter = new TestAnalysisAdapter(documentSnapshot,questions);
+                        recyclerView.setAdapter(analysisAdapter);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(TestAnalysis.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

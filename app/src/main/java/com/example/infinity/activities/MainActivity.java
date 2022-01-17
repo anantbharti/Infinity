@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading...Please wait");
         progressDialog.setCancelable(false);
 
+        FirebaseMessaging.getInstance().subscribeToTopic("Notification");
 
         if(firebaseUser==null){
             startLogInFragment();

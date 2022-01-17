@@ -22,12 +22,20 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tat_test_name"
                 android:layout_marginTop="10dp"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="#ffffff"
                 android:layout_marginBottom="3dp"
                 android:textAlignment="center"
                 android:text="Test name"/>
+            <Button
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_baseline_refresh_24"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="8dp"
+                android:id="@+id/ta_refresh"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,10 +62,22 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginVertical="3dp"
+        android:id="@+id/sort_attempts"
+        android:text="Sort by score"
+        android:textAllCaps="false"
+        android:background="@drawable/button_rad"
+        android:textColor="#ffffff"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="3dp"
         android:id="@+id/attempted_students_list"/>
+
 
 </LinearLayout>

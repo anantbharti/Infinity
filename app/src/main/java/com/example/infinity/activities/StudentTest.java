@@ -1,7 +1,7 @@
 package com.example.infinity.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,7 +10,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.sip.SipSession;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.KeyEvent;
@@ -20,28 +20,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.infinity.R;
-import com.example.infinity.adapter.StudentQuestionsAdapter;
-import com.example.infinity.adapter.StudentResultAdapter;
-import com.example.infinity.adapter.TeacherQuestionsAdapter;
+import com.example.infinity.adapter.StuQuesAdapter;
 import com.example.infinity.models.Question;
 import com.example.infinity.models.Result;
 import com.example.infinity.models.Statics;
 import com.example.infinity.models.Test;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,12 +48,14 @@ public class StudentTest extends AppCompatActivity {
     TextView testName,testSubject,timeRem;
     Button submitBtn;
     RecyclerView recyclerView;
-    StudentQuestionsAdapter questionsAdapter;
-    HashMap<String,String> responses,correctOptions;
+    HashMap<String,String> responses;
+    StuQuesAdapter adapter;
     int score=0;
     Result result;
     int minimizeCount=0;
     ProgressDialog progressDialog;
+    List<Question> quesList;
+    HashMap<String,Question> quesMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +67,6 @@ public class StudentTest extends AppCompatActivity {
         getSupportActionBar().hide();
         setRecyclerView();
         responses = new HashMap<String, String>();
-        correctOptions = new HashMap<String, String>();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait... Don't exit!");
         progressDialog.setCancelable(false);
@@ -81,7 +76,7 @@ public class StudentTest extends AppCompatActivity {
             public void onClick(View view) {
                 new AlertDialog.Builder(StudentTest.this)
                         .setMessage("Do you want to submit ?")
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 endTest();
@@ -123,16 +118,18 @@ public class StudentTest extends AppCompatActivity {
 
     private void endTest() {
         progressDialog.show();
-        responses = questionsAdapter.getResponses();
-        correctOptions = questionsAdapter.getCorrectOptions();
-        for (HashMap.Entry<String, String> element : correctOptions.entrySet()) {
-            if(responses.containsKey(element.getKey())){
-                if(responses.get(element.getKey()).equals(element.getValue()))
+        responses = adapter.getResponses();
+
+        for(int i=0;i<quesList.size();i++){
+            String qc = quesList.get(i).getQuesCode();
+            if(responses.containsKey(qc)){
+                if(responses.get(qc).equals(quesList.get(i).getCorrectOption()))
                     score++;
             }
         }
+
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        result = new Result(test.getTestCode(),Statics.CUR_USER.getAuthId(),Statics.CUR_USER.getName(),Statics.CUR_USER.getRollNo(),date,test.getName(),score,minimizeCount);
+        result = new Result(test.getTestCode(),Statics.CUR_USER.getAuthId(),Statics.CUR_USER.getName(),Statics.CUR_USER.getRollNo(),date,test.getName(),score+"/"+quesList.size(),minimizeCount);
         database.collection(Statics.RESULT_COLLECTION).document(test.getTestCode()+Statics.CUR_USER.getAuthId())
                 .set(result).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -210,16 +207,33 @@ public class StudentTest extends AppCompatActivity {
 
     private void setRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        Query query = database.collection(Statics.QUESTIONS_COLLECTION)
-                .whereEqualTo(Statics.TEST_CODE,test.getTestCode())
-                .orderBy("quesNo");
-        FirestoreRecyclerOptions<Question> options = new FirestoreRecyclerOptions.Builder<Question>()
-                .setQuery(query,Question.class)
-                .build();
-        questionsAdapter = new StudentQuestionsAdapter(options,StudentTest.this);
-        recyclerView.setAdapter(questionsAdapter);
-        questionsAdapter.startListening();
+        database.collection(Statics.QUESTIONS_COLLECTION)
+                .whereEqualTo(Statics.TEST_CODE,test.getTestCode()).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> list =queryDocumentSnapshots.getDocuments();
+                quesList = queryDocumentSnapshots.toObjects(Question.class);
+                Collections.sort(quesList, Comparator.comparing(obj->obj.getQuesNo()));
+                adapter = new StuQuesAdapter(quesList,StudentTest.this);
+                recyclerView.setAdapter(adapter);
+                markAsAttempted();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(StudentTest.this,"Error in loading questions! You may restart the test",Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
+    private void markAsAttempted() {
+        HashMap<String,String> hashMap = new HashMap<String, String>();
+        hashMap.put(Statics.ATTEMPTS_COLLECTION,"1");
+        database.collection(Statics.ATTEMPTS_COLLECTION)
+                .document(test.getTestCode()+Statics.CUR_USER.getAuthId())
+                .set(hashMap);
     }
 
     private void setUpViews() {

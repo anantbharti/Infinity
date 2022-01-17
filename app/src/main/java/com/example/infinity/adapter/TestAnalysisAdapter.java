@@ -1,6 +1,5 @@
 package com.example.infinity.adapter;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,28 +13,40 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.infinity.R;
 import com.example.infinity.models.Question;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.List;
+import java.util.Queue;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class AnalysisAdapter extends FirestoreRecyclerAdapter<Question,AnalysisAdapter.AnalysisViewHolder> {
+public class TestAnalysisAdapter extends RecyclerView.Adapter< TestAnalysisAdapter.TestAnalysisViewHolder> {
 
     DocumentSnapshot documentSnapshot;
+    List<Question> questionList;
 
-    public AnalysisAdapter(@NonNull FirestoreRecyclerOptions<Question> options,DocumentSnapshot documentSnapshot) {
-        super(options);
+    public TestAnalysisAdapter(DocumentSnapshot documentSnapshot, List<Question> questionList) {
         this.documentSnapshot = documentSnapshot;
+        this.questionList = questionList;
+    }
+
+    @NonNull
+    @Override
+    public TestAnalysisAdapter.TestAnalysisViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.analysis_questions_list_item,parent,false);
+        return new TestAnalysisAdapter.TestAnalysisViewHolder(view);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull AnalysisAdapter.AnalysisViewHolder holder, int position, @NonNull Question question) {
+    public void onBindViewHolder(@NonNull TestAnalysisAdapter.TestAnalysisViewHolder holder, int position) {
+
+        Question question = questionList.get(position);
+
         holder.des.setText(question.getQuesNo()+": "+question.getStatement());
         holder.a.setText("(a) "+question.getOptionA());
         holder.b.setText("(b) "+question.getOptionB());
-        holder.c.setText("(c) "+question.getOptionA());
-        holder.d.setText("(d) "+question.getOptionA());
+        holder.c.setText("(c) "+question.getOptionC());
+        holder.d.setText("(d) "+question.getOptionD());
         holder.cor.setText("Correct option: "+question.getCorrectOption());
         if(question.getImageURL()!=null){
             Glide.with(holder.img.getContext()).load(question.getImageURL()).into(holder.img);
@@ -57,17 +68,15 @@ public class AnalysisAdapter extends FirestoreRecyclerAdapter<Question,AnalysisA
         }
     }
 
-    @NonNull
     @Override
-    public AnalysisAdapter.AnalysisViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.analysis_questions_list_item,parent,false);
-        return new AnalysisAdapter.AnalysisViewHolder(view);
+    public int getItemCount() {
+        return questionList.size();
     }
 
-    public class AnalysisViewHolder extends RecyclerView.ViewHolder{
+    public class TestAnalysisViewHolder extends RecyclerView.ViewHolder {
         TextView des,a,b,c,d,cor,res;
         ImageView img;
-        public AnalysisViewHolder(@NonNull View itemView) {
+        public TestAnalysisViewHolder(@NonNull View itemView) {
             super(itemView);
             des = itemView.findViewById(R.id.aql_ques_des);
             a = itemView.findViewById(R.id.aql_opt_a);
@@ -82,6 +91,5 @@ public class AnalysisAdapter extends FirestoreRecyclerAdapter<Question,AnalysisA
             attacher = new PhotoViewAttacher(img);
             attacher.update();
         }
-
     }
 }

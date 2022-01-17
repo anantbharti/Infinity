@@ -25,4 +25,18 @@
         app:showAsAction="never"
         android:title="Share app">
     </item>
+    <item
+        android:id="@+id/menu_refresh"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_refresh_24"
+        android:title="Refresh">
+    </item>
+    <item
+        android:id="@+id/sort"
+        app:showAsAction="never"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_baseline_refresh_24"
+        android:title="Sort tests">
+    </item>
+
 </menu>

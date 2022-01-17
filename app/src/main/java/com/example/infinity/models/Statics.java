@@ -15,4 +15,5 @@ public class Statics {
     public static String RESULT_COLLECTION="Results";  // reference test code + student authId
     public static String RESPONSE_COLLECTION="Responses";  // reference test code + student authId
     public static String ATTEMPTS_COLLECTION = "Attempts"; // reference test code + student authId
+
 }

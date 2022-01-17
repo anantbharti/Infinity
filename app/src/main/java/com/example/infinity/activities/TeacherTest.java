@@ -3,8 +3,7 @@ package com.example.infinity.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,6 +51,7 @@ public class TeacherTest extends AppCompatActivity {
     EditText editTestName,editTestSubject,editTestDuration;
     TeacherQuestionsAdapter questionsAdapter;
     ProgressDialog progressDialog;
+    String editable = "1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +61,11 @@ public class TeacherTest extends AppCompatActivity {
         getSupportActionBar().hide();
         testCode=getIntent().getExtras().getString(Statics.TEST_CODE);
         database = FirebaseFirestore.getInstance();
-        setRecyclerView();
+
         documentReference = database.collection(Statics.TESTS_COLLECTION).document(testCode);
         progressDialog  = new ProgressDialog(this);
         progressDialog.setCancelable(false);
+
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -82,15 +84,34 @@ public class TeacherTest extends AppCompatActivity {
             }
         });
 
+        database.collection(Statics.COUNTERS).document(testCode).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                editable = String.valueOf(documentSnapshot.getLong(Statics.STUDENT_COUNT));
+                setRecyclerView();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                setRecyclerView();
+                Toast.makeText(TeacherTest.this,"Something went wrong!",Toast.LENGTH_SHORT);
+            }
+        });
+
         addQues.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TeacherTest.this,EditQuestion.class);
-                intent.putExtra(Statics.TEST_CODE,testCode);
-                intent.putExtra("Test",test);
-                Question q = null;
-                intent.putExtra("Question",q);
-                startActivity(intent);
+                if(editable.equals("0")) {
+                    Intent intent = new Intent(TeacherTest.this, EditQuestion.class);
+                    intent.putExtra(Statics.TEST_CODE, testCode);
+                    intent.putExtra("Test", test);
+                    intent.putExtra("editable",editable);
+                    Question q = null;
+                    intent.putExtra("Question", q);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(TeacherTest.this,"Test attempted! Can't add question",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         seeWhoAttempted.setOnClickListener(new View.OnClickListener() {
@@ -124,9 +145,13 @@ public class TeacherTest extends AppCompatActivity {
         editTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recyclerView.setVisibility(View.GONE);
-                addQues.setVisibility(View.GONE);
-                editTestCv.setVisibility(View.VISIBLE);
+                if(editable.equals("0")) {
+                    recyclerView.setVisibility(View.GONE);
+                    addQues.setVisibility(View.GONE);
+                    editTestCv.setVisibility(View.VISIBLE);
+                }else{
+                    Toast.makeText(TeacherTest.this,"Test attempted! Can't be edited",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -174,6 +199,7 @@ public class TeacherTest extends AppCompatActivity {
         });
     }
 
+
     private void deleteTestFun() {
         new AlertDialog.Builder(TeacherTest.this)
                 .setMessage("Do you want to delete the test ?")
@@ -208,6 +234,7 @@ public class TeacherTest extends AppCompatActivity {
     }
 
     private void setRecyclerView() {
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         Query query = database.collection(Statics.QUESTIONS_COLLECTION)
                 .whereEqualTo(Statics.TEST_CODE,testCode)
@@ -215,7 +242,7 @@ public class TeacherTest extends AppCompatActivity {
         FirestoreRecyclerOptions<Question> options = new FirestoreRecyclerOptions.Builder<Question>()
                 .setQuery(query,Question.class)
                 .build();
-        questionsAdapter = new TeacherQuestionsAdapter(options,TeacherTest.this);
+        questionsAdapter = new TeacherQuestionsAdapter(options,TeacherTest.this,editable);
         recyclerView.setAdapter(questionsAdapter);
         questionsAdapter.startListening();
     }

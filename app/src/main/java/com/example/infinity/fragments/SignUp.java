@@ -187,7 +187,6 @@ public class SignUp extends Fragment {
                 Toast.makeText(getContext(),"Enter subject!",Toast.LENGTH_SHORT).show();
                 return  false;
             }
-            des = "Sub: "+des;
         }
 
         pwd = regPwd.getText().toString().trim();

@@ -1,6 +1,7 @@
 package com.example.infinity.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,7 +11,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,42 +26,42 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.infinity.R;
-import com.example.infinity.adapter.StudentResultAdapter;
-import com.example.infinity.adapter.TeacherTestsAdapter;
+import com.example.infinity.adapter.StuResultAdapter;
 import com.example.infinity.models.Result;
 import com.example.infinity.models.Statics;
 import com.example.infinity.models.Test;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.Query.Direction;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class StudentDashboard extends AppCompatActivity {
 
     FirebaseAuth auth;
     RecyclerView recyclerView;
-    StudentResultAdapter studentResultAdapter;
+//    StudentResultAdapter studentResultAdapter;
     FirebaseFirestore database;
     Button enter,start,cancel;
     EditText test_code_ed;
-    TextView testName,testSubject,testDuration,testInstructions;
+    TextView testName,testSubject,testDuration,testInstructions,yt;
     CardView cardView,cardViewIns;
     RelativeLayout relativeLayout;
     Test test;
     ProgressDialog progressDialog;
     FirebaseDatabase  db;
+    List<Result> results;
+    StuResultAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,37 +116,20 @@ public class StudentDashboard extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 progressDialog.show();
-
                 database.collection(Statics.ATTEMPTS_COLLECTION)
                         .document(test.getTestCode()+Statics.CUR_USER.getAuthId())
                         .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                        String attempted =  documentSnapshot.getString(Statics.ATTEMPTS_COLLECTION);
-                       if(attempted == null){
-                           HashMap<String,String> hashMap = new HashMap<String, String>();
-                           hashMap.put(Statics.ATTEMPTS_COLLECTION,"1");
-                           database.collection(Statics.ATTEMPTS_COLLECTION)
-                                   .document(test.getTestCode()+Statics.CUR_USER.getAuthId())
-                                   .set(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                               @Override
-                               public void onSuccess(Void aVoid) {
-                                   progressDialog.dismiss();
-                                   Intent intent = new Intent(StudentDashboard.this,StudentTest.class);
-                                   intent.putExtra("Test",test);
-                                   startActivity(intent);
-                                   finish();
-                               }
-                           }).addOnFailureListener(new OnFailureListener() {
-                               @Override
-                               public void onFailure(@NonNull Exception e) {
-                                   progressDialog.dismiss();
-                                   Toast.makeText(StudentDashboard.this,"Error...Try again!",Toast.LENGTH_SHORT).show();
-                               }
-                           });
+                        progressDialog.dismiss();
+                        if(attempted == null){
+                            Intent intent = new Intent(StudentDashboard.this,StudentTest.class);
+                            intent.putExtra("Test",test);
+                            startActivity(intent);
+                            finish();
                        }
                        else{
-                           progressDialog.dismiss();
                            cardView.setVisibility(View.GONE);
                            cardViewIns.setVisibility(View.GONE);
                            relativeLayout.setVisibility(View.VISIBLE);
@@ -161,6 +147,7 @@ public class StudentDashboard extends AppCompatActivity {
             }
         });
     }
+
 
     private void validate(String testCode) {
         database.collection(Statics.TESTS_COLLECTION).document(testCode).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -211,23 +198,25 @@ public class StudentDashboard extends AppCompatActivity {
     }
 
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        setRecyclerView();
-//    }
     private void setRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        Query query = database.collection(Statics.RESULT_COLLECTION)
+        database.collection(Statics.RESULT_COLLECTION)
                 .whereEqualTo("studentId",Statics.CUR_USER.getAuthId())
-                .orderBy("date",Direction.DESCENDING)
-                .orderBy("testName");
-        FirestoreRecyclerOptions<Result> options = new FirestoreRecyclerOptions.Builder<Result>()
-                .setQuery(query,Result.class)
-                .build();
-        studentResultAdapter = new StudentResultAdapter(options,this);
-        recyclerView.setAdapter(studentResultAdapter);
-        studentResultAdapter.startListening();
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                results = queryDocumentSnapshots.toObjects(Result.class);
+                Collections.sort(results,Comparator.comparing(obj->obj.getDate(),Collections.reverseOrder()));
+                adapter = new StuResultAdapter(results,StudentDashboard.this);
+                recyclerView.setAdapter(adapter);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(StudentDashboard.this,e.getLocalizedMessage()+" Try refreshing",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void setUpViews() {
@@ -244,6 +233,7 @@ public class StudentDashboard extends AppCompatActivity {
         cardView.setVisibility(View.GONE);
         cardViewIns = findViewById(R.id.sd_instructions_cv);
         testInstructions = findViewById(R.id.tv_ins);
+        yt = findViewById(R.id.stu_dashboard_text);
         cardViewIns.setVisibility(View.GONE);
 
     }
@@ -306,6 +296,38 @@ public class StudentDashboard extends AppCompatActivity {
                     }
                 });
 
+                break;
+            }
+            case R.id.menu_refresh:{
+                Toast.makeText(StudentDashboard.this,"Refreshing...",Toast.LENGTH_SHORT).show();
+                setRecyclerView();
+                break;
+            }
+            case R.id.sort:{
+                if(results.isEmpty()){
+                    Toast.makeText(StudentDashboard.this,"Error... Try refreshing!",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    final String[] sortType={"Date attempted","Test name"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(StudentDashboard.this);
+                    builder.setTitle("Sort by");
+                    builder.setSingleChoiceItems(sortType, 0, new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            if(i==1){
+                                Collections.sort(results,Comparator.comparing(obj->obj.getTestName()));
+                            }else {
+                                Collections.sort(results,Comparator.comparing(obj->obj.getDate(),Collections.reverseOrder()));
+                            }
+                            adapter = new StuResultAdapter(results,StudentDashboard.this);
+                            recyclerView.setAdapter(adapter);
+                        }
+                    });
+                    builder.setPositiveButton("Done", null);
+                    builder.setCancelable(true);
+                    builder.show();
+                }
                 break;
             }
         }

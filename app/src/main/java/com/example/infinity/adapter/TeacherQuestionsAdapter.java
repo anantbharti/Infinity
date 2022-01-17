@@ -35,10 +35,12 @@ public class TeacherQuestionsAdapter extends FirestoreRecyclerAdapter<Question, 
 
     FirebaseFirestore database;
     Context context;
-    public TeacherQuestionsAdapter(@NonNull FirestoreRecyclerOptions<Question> options, Context context) {
+    String editable;
+    public TeacherQuestionsAdapter(@NonNull FirestoreRecyclerOptions<Question> options, Context context,String editable) {
         super(options);
         this.context = context;
         this.database = FirebaseFirestore.getInstance();
+        this.editable = editable;
     }
 
     @Override
@@ -47,11 +49,14 @@ public class TeacherQuestionsAdapter extends FirestoreRecyclerAdapter<Question, 
         holder.quesNo.setText(question.getQuesNo()+": ");
         holder.quesDes.setText(question.getStatement());
 
+        if(!editable.equals("0"))
+            holder.del.setVisibility(View.GONE);
         holder.quesDes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, EditQuestion.class);
                 intent.putExtra("Question",question);
+                intent.putExtra("editable",editable);
                 intent.putExtra(Statics.TEST_CODE,question.getTestCode());
                 intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
                 context.getApplicationContext().startActivity(intent);

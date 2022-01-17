@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.infinity.R;
 import com.example.infinity.models.Question;
 import com.example.infinity.models.Statics;
@@ -49,6 +50,7 @@ public class EditQuestion extends AppCompatActivity {
     StorageReference storageReference;
     FirebaseFirestore database;
     ProgressDialog progressDialog;
+    String editable;
 //    Test test;
     Question question;
 
@@ -62,6 +64,11 @@ public class EditQuestion extends AppCompatActivity {
 //        test = (Test) getIntent().getSerializableExtra("Test");
         question = (Question) getIntent().getSerializableExtra("Question");
         testCode = getIntent().getExtras().getString(Statics.TEST_CODE);
+        editable = getIntent().getExtras().getString("editable");
+        if(!editable.equals("0")) {
+            saveBtn.setVisibility(View.GONE);
+            editImgBtn.setVisibility(View.GONE);
+        }
 
         if(question!=null){
             quesStatement.setText(question.getStatement());
@@ -70,6 +77,11 @@ public class EditQuestion extends AppCompatActivity {
             optionB.setText(question.getOptionB());
             optionC.setText(question.getOptionC());
             optionD.setText(question.getOptionD());
+
+            if(question.getImageURL()!=null){
+                Glide.with(quesImg.getContext()).load(question.getImageURL()).into(quesImg);
+                // to zoom image
+            }
             String CO = question.getCorrectOption();
             if(CO.equals("a"))
                 radBtnA.setChecked(true);

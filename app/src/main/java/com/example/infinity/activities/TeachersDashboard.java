@@ -1,6 +1,7 @@
 package com.example.infinity.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -21,11 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.infinity.R;
-import com.example.infinity.adapter.TeacherTestsAdapter;
+import com.example.infinity.adapter.TeaTestAdapter;
 import com.example.infinity.models.Statics;
 import com.example.infinity.models.Test;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,19 +34,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 public class TeachersDashboard extends AppCompatActivity {
 
     RecyclerView recyclerView;
     Button addTest,proceed,cancel;
-    TeacherTestsAdapter teacherTestsAdapter;
+    TeaTestAdapter adapter;
     FirebaseFirestore database;
     ProgressDialog progressDialog;
     EditText testName,subject,duration;
@@ -54,6 +56,7 @@ public class TeachersDashboard extends AppCompatActivity {
     String testCode;
     FirebaseAuth auth;
     FirebaseDatabase db;
+    List<Test> testList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,29 +166,62 @@ public class TeachersDashboard extends AppCompatActivity {
 
                 break;
             }
+            case R.id.menu_refresh:{
+                Toast.makeText(TeachersDashboard.this,"Refreshing...",Toast.LENGTH_SHORT).show();
+                setRecyclerView();
+                break;
+            }
+            case R.id.sort:{
+                if(testList.isEmpty()){
+                    Toast.makeText(TeachersDashboard.this,"Error... Try refreshing!",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    final String[] sortType={"Date created","Test name"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TeachersDashboard.this);
+                    builder.setTitle("Sort by");
+                    builder.setSingleChoiceItems(sortType, 0, new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            if(i==1){
+                                Collections.sort(testList,Comparator.comparing(obj->obj.getName()));
+                            }else {
+                                Collections.sort(testList,Comparator.comparing(obj->obj.getDate(),Collections.reverseOrder()));
+                            }
+                            adapter = new TeaTestAdapter(TeachersDashboard.this,testList);
+                            recyclerView.setAdapter(adapter);
+                        }
+                    });
+                    builder.setPositiveButton("Ok", null);
+                    builder.setCancelable(true);
+                    builder.show();
+                }
+            }
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setRecyclerView();
     }
 
 
     private void setRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        Query query = database.collection(Statics.TESTS_COLLECTION)
+        database.collection(Statics.TESTS_COLLECTION)
                 .whereEqualTo("preparedById",Statics.CUR_USER.getAuthId())
-                .orderBy("date")
-                .orderBy("name");
-        FirestoreRecyclerOptions<Test> options = new FirestoreRecyclerOptions.Builder<Test>()
-                .setQuery(query,Test.class)
-                .build();
-        teacherTestsAdapter = new TeacherTestsAdapter(options,this);
-        recyclerView.setAdapter(teacherTestsAdapter);
-        teacherTestsAdapter.startListening();
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                testList = queryDocumentSnapshots.toObjects(Test.class);
+                Collections.sort(testList,Comparator.comparing(obj->obj.getDate(),Collections.reverseOrder()));
+                adapter = new TeaTestAdapter(TeachersDashboard.this,testList);
+                recyclerView.setAdapter(adapter);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(TeachersDashboard.this,e.getMessage()+" Try refreshing",Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     private void proceedNewTest(String newTestName, String testSubject, int testDuration) {
