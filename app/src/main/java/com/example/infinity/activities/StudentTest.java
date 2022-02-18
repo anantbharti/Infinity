@@ -23,7 +23,7 @@ import com.example.infinity.R;
 import com.example.infinity.adapter.StuQuesAdapter;
 import com.example.infinity.models.Question;
 import com.example.infinity.models.Result;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.example.infinity.models.Test;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,7 +45,7 @@ public class StudentTest extends AppCompatActivity {
 
     Test test;
     FirebaseFirestore database;
-    TextView testName,testSubject,timeRem;
+    TextView testName,testSubject,timeRem,stuName,stuRoll;
     Button submitBtn;
     RecyclerView recyclerView;
     HashMap<String,String> responses;
@@ -128,8 +128,15 @@ public class StudentTest extends AppCompatActivity {
             }
         }
 
+        String qCnt = ""+quesList.size();
+        String marks = ""+score;
+        int diff= qCnt.length()-marks.length();
+        if(diff==1)
+            marks="0"+marks;
+        else if(diff==2)
+            marks="00"+marks;
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        result = new Result(test.getTestCode(),Statics.CUR_USER.getAuthId(),Statics.CUR_USER.getName(),Statics.CUR_USER.getRollNo(),date,test.getName(),score+"/"+quesList.size(),minimizeCount);
+        result = new Result(test.getTestCode(),Statics.CUR_USER.getAuthId(),Statics.CUR_USER.getName(),Statics.CUR_USER.getRollNo(),date,test.getName(),marks+"/"+qCnt,minimizeCount);
         database.collection(Statics.RESULT_COLLECTION).document(test.getTestCode()+Statics.CUR_USER.getAuthId())
                 .set(result).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -245,5 +252,9 @@ public class StudentTest extends AppCompatActivity {
         timeRem.setText(test.getDuration()+"mins rem");
         submitBtn = findViewById(R.id.submit_btn);
         recyclerView= findViewById(R.id.st_ques_list);
+        stuName = findViewById(R.id.stu_test_stu_name);
+        stuName.setText(Statics.CUR_USER.getName());
+        stuRoll = findViewById(R.id.test_stu_roll);
+        stuRoll.setText("Roll no: "+Statics.CUR_USER.getRollNo());
     }
 }

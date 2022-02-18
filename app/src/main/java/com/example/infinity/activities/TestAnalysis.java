@@ -16,7 +16,7 @@ import com.example.infinity.R;
 import com.example.infinity.adapter.TestAnalysisAdapter;
 import com.example.infinity.models.Question;
 import com.example.infinity.models.Result;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;

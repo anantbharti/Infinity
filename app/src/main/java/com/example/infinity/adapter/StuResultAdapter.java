@@ -14,10 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.infinity.R;
 import com.example.infinity.activities.TestAnalysis;
 import com.example.infinity.models.Result;
-import com.example.infinity.models.Statics;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.example.infinity.utilities.Statics;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;

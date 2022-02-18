@@ -1,4 +1,9 @@
-package com.example.infinity.models;
+package com.example.infinity.utilities;
+
+
+import com.example.infinity.models.User;
+
+import java.util.HashSet;
 
 public class Statics {
     public static User CUR_USER;
@@ -15,5 +20,5 @@ public class Statics {
     public static String RESULT_COLLECTION="Results";  // reference test code + student authId
     public static String RESPONSE_COLLECTION="Responses";  // reference test code + student authId
     public static String ATTEMPTS_COLLECTION = "Attempts"; // reference test code + student authId
-
+    public static HashSet<String> DELETED_TESTS = new HashSet<String>();
 }

@@ -19,14 +19,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.infinity.R;
 import com.example.infinity.models.Question;
-import com.example.infinity.models.Statics;
-import com.example.infinity.models.Test;
+import com.example.infinity.utilities.Statics;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -169,6 +167,8 @@ public class EditQuestion extends AppCompatActivity {
     private void uploadQuestion() {
         database=FirebaseFirestore.getInstance();
         Question newQues=new Question(qNo,qStatement,optA,optB,optC,optD,corOpt,imgURL,qCode,testCode);
+        if(question!=null&&imgURL==null)
+            newQues.setImageURL(question.getImageURL());
 
         database.collection(Statics.QUESTIONS_COLLECTION).document(testCode+qCode)
                 .set(newQues).addOnCompleteListener(new OnCompleteListener<Void>() {

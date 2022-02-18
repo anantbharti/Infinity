@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.infinity">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -13,16 +13,19 @@
         android:roundIcon="@mipmap/ic_inf"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.Profile"></activity>
+        <activity android:name=".activities.About"></activity>
+        <activity android:name=".activities.Profile" />
         <activity android:name=".activities.TestAttempts" />
         <activity android:name=".activities.TestAnalysis" />
         <activity android:name=".activities.StudentTest" />
         <activity android:name=".activities.EditQuestion" />
         <activity android:name=".activities.TeacherTest" />
-        <activity android:name=".activities.StudentDashboard"
-            android:label="Dashboard"/>
-        <activity android:name=".activities.TeachersDashboard"
-            android:label="Dashboard"/>
+        <activity
+            android:name=".activities.StudentDashboard"
+            android:label="Dashboard" />
+        <activity
+            android:name=".activities.TeachersDashboard"
+            android:label="Dashboard" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

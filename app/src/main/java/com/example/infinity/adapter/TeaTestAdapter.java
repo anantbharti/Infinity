@@ -9,13 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.infinity.R;
 import com.example.infinity.activities.TeacherTest;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.example.infinity.models.Test;
 
 import java.util.List;
@@ -48,10 +49,14 @@ public class TeaTestAdapter extends RecyclerView.Adapter<TeaTestAdapter.TeaTestV
         holder.open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, TeacherTest.class);
-                intent.putExtra(Statics.TEST_CODE,test.getTestCode());
-                intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
-                context.getApplicationContext().startActivity(intent);
+                if(Statics.DELETED_TESTS.contains(test.getTestCode())){
+                    Toast.makeText(context,"This test was deleted!",Toast.LENGTH_SHORT).show();
+                }else {
+                    Intent intent = new Intent(context, TeacherTest.class);
+                    intent.putExtra(Statics.TEST_CODE,test.getTestCode());
+                    intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.getApplicationContext().startActivity(intent);
+                }
             }
         });
         holder.invite.setOnClickListener(new View.OnClickListener() {

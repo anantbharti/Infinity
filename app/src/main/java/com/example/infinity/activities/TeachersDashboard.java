@@ -24,8 +24,9 @@ import android.widget.Toast;
 
 import com.example.infinity.R;
 import com.example.infinity.adapter.TeaTestAdapter;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.example.infinity.models.Test;
+import com.example.infinity.utilities.Update;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -70,6 +71,9 @@ public class TeachersDashboard extends AppCompatActivity {
         auth=FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
         setRecyclerView();
+        Statics.DELETED_TESTS.clear();
+        Update update = new Update(TeachersDashboard.this);
+        update.checkForUpdate();
 
         addTest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +110,7 @@ public class TeachersDashboard extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -167,6 +172,7 @@ public class TeachersDashboard extends AppCompatActivity {
                 break;
             }
             case R.id.menu_refresh:{
+                Statics.DELETED_TESTS.clear();
                 Toast.makeText(TeachersDashboard.this,"Refreshing...",Toast.LENGTH_SHORT).show();
                 setRecyclerView();
                 break;
@@ -196,6 +202,10 @@ public class TeachersDashboard extends AppCompatActivity {
                     builder.setCancelable(true);
                     builder.show();
                 }
+            }
+            case R.id.about_us:{
+                startActivity(new Intent(TeachersDashboard.this,About.class));
+                break;
             }
         }
         return super.onOptionsItemSelected(item);

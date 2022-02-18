@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.example.infinity.R;
 import com.example.infinity.adapter.StuResultAdapter;
 import com.example.infinity.models.Result;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -86,7 +86,7 @@ public class TestAttempts extends AppCompatActivity {
                 {
                     if(sortByScore%2==1){
                         sort.setText("Sort by names");
-                        Collections.sort(results, Comparator.comparing(obj->obj.getScore()));
+                        Collections.sort(results, Comparator.comparing(obj->obj.getScore(),Collections.reverseOrder()));
                     } else{
                         sort.setText("Sort by scores");
                         Collections.sort(results, Comparator.comparing(obj->obj.getStudentName()));

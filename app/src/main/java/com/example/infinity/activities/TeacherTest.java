@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,9 +23,8 @@ import android.widget.Toast;
 
 import com.example.infinity.R;
 import com.example.infinity.adapter.TeacherQuestionsAdapter;
-import com.example.infinity.fragments.LogIn;
 import com.example.infinity.models.Question;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.example.infinity.models.Test;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -213,6 +211,7 @@ public class TeacherTest extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 progressDialog.dismiss();
                                 if(task.isSuccessful()){
+                                    Statics.DELETED_TESTS.add(testCode);
                                     Toast.makeText(TeacherTest.this,"Test deleted successfully",Toast.LENGTH_SHORT).show();
                                     finish();
                                 }else{

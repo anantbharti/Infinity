@@ -5,20 +5,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.paging.LoadState;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.infinity.R;
 import com.example.infinity.fragments.LogIn;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.example.infinity.models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore database;
     private DocumentReference documentReference;
     private FirebaseUser firebaseUser;
-    private ProgressDialog progressDialog;
+    ProgressBar progressBar;
+    ImageView inf;
+    TextView welcome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,38 +50,15 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         firebaseUser = auth.getCurrentUser();
         database = FirebaseFirestore.getInstance();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...Please wait");
-        progressDialog.setCancelable(false);
+
+        progressBar = findViewById(R.id.welcome_progress_bar);
+        inf = findViewById(R.id.inf_logo);
+        welcome = findViewById(R.id.welcome_txt);
 
         FirebaseMessaging.getInstance().subscribeToTopic("Notification");
 
-        if(firebaseUser==null){
-            startLogInFragment();
-        }
-        else{
-            progressDialog.show();
-                documentReference = database.collection(Statics.USERS_COLLECTION).document(auth.getUid());
-                documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        progressDialog.dismiss();
-                        if (documentSnapshot == null) {
-                            startLogInFragment();
-                        } else {
-                            Statics.CUR_USER=documentSnapshot.toObject(User.class);
-                            startUserDashboard();
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
-                        startLogInFragment();
-                    }
-                });
-        }
+        proceed();
+
     }
 
     @Override
@@ -99,6 +79,35 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private void proceed(){
+        if(firebaseUser==null){
+            startLogInFragment();
+        }
+        else{
+//            progressDialog.show();
+            documentReference = database.collection(Statics.USERS_COLLECTION).document(auth.getUid());
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        progressDialog.dismiss();
+                    if (documentSnapshot == null) {
+                        startLogInFragment();
+                    } else {
+                        Statics.CUR_USER=documentSnapshot.toObject(User.class);
+                        startUserDashboard();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        progressDialog.dismiss();
+                    startLogInFragment();
+                }
+            });
+        }
+    }
+
     private void startUserDashboard(){
         if (Statics.CUR_USER.getUserType().equals(Statics.STUDENT)) {
 //                            Toast.makeText(MainActivity.this,"Student",Toast.LENGTH_SHORT).show();
@@ -111,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startLogInFragment(){
+        welcome.setVisibility(View.GONE);
+        inf.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         FragmentManager fm=getSupportFragmentManager();
         FragmentTransaction ft=fm.beginTransaction();
         ft.add(R.id.main_activity,new LogIn());

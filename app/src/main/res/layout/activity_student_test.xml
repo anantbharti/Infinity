@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"
+                android:text="Test Name"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_margin="10dp"
@@ -33,13 +33,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Subject"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="10dp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/student_test_name"
-                android:textColor="#E4E4E4"
+                android:textColor="#FFFFFF"
                 android:id="@+id/stu_test_subject"/>
 
             <TextView
@@ -47,13 +46,37 @@
                 android:layout_height="wrap_content"
                 android:text="Time remaining"
                 android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginBottom="10dp"
+                android:textSize="16sp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/student_test_name"
-                android:textColor="#E4E4E4"
+                android:textColor="#FFFFFF"
                 android:id="@+id/test_time_rem"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Student name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/stu_test_subject"
+                android:textColor="#E4E4E4"
+                android:id="@+id/stu_test_stu_name"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Roll no: "
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/test_time_rem"
+                android:textColor="#E4E4E4"
+                android:id="@+id/test_stu_roll"/>
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

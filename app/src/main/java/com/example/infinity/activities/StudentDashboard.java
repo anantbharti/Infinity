@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,8 +27,9 @@ import android.widget.Toast;
 import com.example.infinity.R;
 import com.example.infinity.adapter.StuResultAdapter;
 import com.example.infinity.models.Result;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.example.infinity.models.Test;
+import com.example.infinity.utilities.Update;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,10 +41,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 public class StudentDashboard extends AppCompatActivity {
 
@@ -76,12 +73,17 @@ public class StudentDashboard extends AppCompatActivity {
         progressDialog.setCancelable(false);
         db = FirebaseDatabase.getInstance();
 
+        Update update = new Update(StudentDashboard.this);
+        update.checkForUpdate();
+
 
         db.getReference("Instructions").child("text").get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
-                String ins = dataSnapshot.getValue().toString();
-                testInstructions.setText(ins);
+                try{
+                    String ins = dataSnapshot.getValue().toString();
+                    testInstructions.setText(ins);
+                }catch (Exception e){}
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -196,7 +198,6 @@ public class StudentDashboard extends AppCompatActivity {
         testDuration.setText("Time: "+test.getDuration()+" mins");
         testSubject.setText(test.getSubject());
     }
-
 
     private void setRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -328,6 +329,10 @@ public class StudentDashboard extends AppCompatActivity {
                     builder.setCancelable(true);
                     builder.show();
                 }
+                break;
+            }
+            case R.id.about_us:{
+                startActivity(new Intent(StudentDashboard.this,About.class));
                 break;
             }
         }

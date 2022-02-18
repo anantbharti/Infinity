@@ -19,7 +19,7 @@ import com.example.infinity.R;
 import com.example.infinity.activities.EditQuestion;
 import com.example.infinity.activities.TeacherTest;
 import com.example.infinity.models.Question;
-import com.example.infinity.models.Statics;
+import com.example.infinity.utilities.Statics;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,8 +28,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
 
 public class TeacherQuestionsAdapter extends FirestoreRecyclerAdapter<Question, TeacherQuestionsAdapter.TeacherQuestionViewHolder> {
 
