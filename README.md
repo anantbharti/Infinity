@@ -1,6 +1,8 @@
 # Infinity
 An android app for online MCQ tests.
 
+[Apk download link](https://drive.google.com/file/d/1RVdouim1oVJo8SMPtw0ZYpAGZhWOOcCf/view?usp=sharing)
+
 Tech stack:- Java, XML, Firebase (Authentication, Firestore, Realtime Database, Cloud Notifications), Android Studio
 
 Features:-
