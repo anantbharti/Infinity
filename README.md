@@ -1,7 +1,7 @@
 # Infinity
-An android app for online MCQ quiz.
+An android app for online MCQ tests.
 
-Tech stack:- Java,XML,Firebase,Android Studio
+Tech stack:- Java, XML, Firebase (Authentication, Firestore, Realtime Database, Cloud Notifications), Android Studio
 
 Features:-
 
@@ -13,18 +13,18 @@ Features:-
   >  if user has registered as teacher then, he/she will be directed to teachers dashboard for creating quiz
   >  else he/she will be directed to students dashboard to attempt quiz.
     
-* Teachers can create, update and delete quiz anytime.
+* Teachers can create, update and delete tests anytime.
 
-* Students can attempt quiz anytime and get the score instantly.
+* Students can attempt tests anytime and get the score instantly.
 
-* Added feature of timer during the quiz.
+* Added feature of timer, warning and storing count on screen minimisation during the test.
 
-* Quiz will be finished itself at completion of the added time.
+* Test will be finished itself at completion of the added time.
 
-* User friendly UI
+* Addictive User friendly UI.
  
-* View record of attempted quizzes and scores with date and times.
+* Students can see record of attempted tests and scores with date and times in deifferent sorted orders.
 
-* View responses and correct answers of the attempted quiz.
+* Students can see responses and correct answers of each attempted tests.
 
-* Teachers can see who has attempted their tests.
+* Teachers can see who has attempted their tests in different sorted orders.
